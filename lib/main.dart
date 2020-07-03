@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localstorage/databaseHelper.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,15 +25,33 @@ class _HomeState extends State<Home> {
   final txtNameCtrl = new TextEditingController();
   final txtAgeCtrl = new TextEditingController();
   final txtEmailCtrl = new TextEditingController();
+  bool validate = false;
 
-  onSave() {
-    if (txtNameCtrl.text.isEmpty) {
-      print("Empty Text Field");
+  final datbaseHelper = DatabaseHelper.instance;
+
+  void saveTo(String saveTo) async {
+    if (txtNameCtrl.text.isEmpty ||
+        txtAgeCtrl.text.isEmpty ||
+        txtEmailCtrl.text.isEmpty) {
+      setState(() {
+        validate = true;
+      });
     } else {
+      if (saveTo == 'sqfite') {
+        Map<String, dynamic> row = {
+          DatabaseHelper.columnName: txtNameCtrl.text,
+          DatabaseHelper.columnAge: int.parse(txtAgeCtrl.text),
+          DatabaseHelper.columnEmail: txtEmailCtrl.text,
+        };
+        final id = await datbaseHelper.insert(row);
+        print('inserted row id: $id');
+      }
+
       setState(() {
         txtNameCtrl.text = '';
+        txtAgeCtrl.text = '';
+        txtEmailCtrl.text = '';
       });
-      print('Empty Now');
     }
   }
 
@@ -42,183 +61,190 @@ class _HomeState extends State<Home> {
         leading: Icon(Icons.dashboard),
         title: Text('Store in Local'),
       ),
-      body: Container(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: TextFormField(
-                keyboardType: TextInputType.text,
-                decoration: InputDecoration(
-                  icon: Icon(Icons.person),
-                  hintText: 'Enter Name',
-                  labelText: 'Name',
-                ),
-                controller: txtNameCtrl,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  icon: Icon(Icons.calendar_today),
-                  hintText: 'Enter Age',
-                  labelText: 'Age',
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: TextFormField(
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  icon: Icon(Icons.email),
-                  hintText: 'Enter Email',
-                  labelText: 'Email',
-                ),
-              ),
-            ),
-            Center(
-              child: Text(
-                'Save Data Using',
-                style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontSize: 30,
-                ),
-              ),
-            ),
-            RaisedButton(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                  'SQLite',
-                  style: TextStyle(
-                    fontSize: 20,
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: TextFormField(
+                  controller: txtNameCtrl,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.person),
+                    hintText: 'Enter Name',
+                    labelText: 'Name',
+                    errorText: validate ? 'Enter Text' : null,
                   ),
                 ),
               ),
-              color: Colors.blueAccent,
-              textColor: Colors.white,
-              elevation: 10,
-              splashColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              onPressed: () {},
-            ),
-            RaisedButton(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                  'Shared Preference ',
-                  style: TextStyle(
-                    fontSize: 20,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: TextFormField(
+                  controller: txtAgeCtrl,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.calendar_today),
+                    hintText: 'Enter Age',
+                    labelText: 'Age',
+                    errorText: validate ? 'Enter Text' : null,
                   ),
                 ),
               ),
-              color: Colors.blueAccent,
-              textColor: Colors.white,
-              elevation: 10,
-              splashColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              onPressed: () {},
-            ),
-            RaisedButton(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                  'File Read/Write',
-                  style: TextStyle(
-                    fontSize: 20,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: TextFormField(
+                  controller: txtEmailCtrl,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.email),
+                    hintText: 'Enter Email',
+                    labelText: 'Email',
+                    errorText: validate ? 'Enter Text' : null,
                   ),
                 ),
               ),
-              color: Colors.blueAccent,
-              textColor: Colors.white,
-              elevation: 10,
-              splashColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              onPressed: () {},
-            ),
-            Divider(
-              height: 30,
-              thickness: 3,
-              color: Colors.grey,
-            ),
-            Center(
-              child: Text(
-                'Retrieve Data Using',
-                style: TextStyle(
-                  color: Colors.blueAccent,
-                  fontSize: 30,
-                ),
-              ),
-            ),
-            RaisedButton(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
+              Center(
                 child: Text(
-                  'SQLite',
+                  'Save Data Using',
                   style: TextStyle(
-                    fontSize: 20,
+                    color: Colors.blueAccent,
+                    fontSize: 30,
                   ),
                 ),
               ),
-              color: Colors.blueAccent,
-              textColor: Colors.white,
-              elevation: 10,
-              splashColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+              RaisedButton(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    'SQLite',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                elevation: 10,
+                splashColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                onPressed: () => saveTo('sqfite'),
               ),
-              onPressed: () {},
-            ),
-            RaisedButton(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
+              RaisedButton(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    'Shared Preference ',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                elevation: 10,
+                splashColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                onPressed: () {},
+              ),
+              RaisedButton(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    'File Read/Write',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                elevation: 10,
+                splashColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                onPressed: () {},
+              ),
+              Divider(
+                height: 30,
+                thickness: 3,
+                color: Colors.grey,
+              ),
+              Center(
                 child: Text(
-                  'Shared Preference ',
+                  'Retrieve Data Using',
                   style: TextStyle(
-                    fontSize: 20,
+                    color: Colors.blueAccent,
+                    fontSize: 30,
                   ),
                 ),
               ),
-              color: Colors.blueAccent,
-              textColor: Colors.white,
-              elevation: 10,
-              splashColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              onPressed: () {},
-            ),
-            RaisedButton(
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                  'File Read/Write',
-                  style: TextStyle(
-                    fontSize: 20,
+              RaisedButton(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    'SQLite',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
                   ),
                 ),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                elevation: 10,
+                splashColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                onPressed: () {},
               ),
-              color: Colors.blueAccent,
-              textColor: Colors.white,
-              elevation: 10,
-              splashColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+              RaisedButton(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    'Shared Preference ',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                elevation: 10,
+                splashColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                onPressed: () {},
               ),
-              onPressed: () {},
-            ),
-          ],
+              RaisedButton(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Text(
+                    'File Read/Write',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                color: Colors.blueAccent,
+                textColor: Colors.white,
+                elevation: 10,
+                splashColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                onPressed: () {},
+              ),
+            ],
+          ),
         ),
       ),
     );
