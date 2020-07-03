@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:localstorage/databaseHelper.dart';
+import 'package:localstorage/showSqfiteData.dart';
 
 void main() {
   runApp(MyApp());
@@ -46,7 +47,6 @@ class _HomeState extends State<Home> {
         final id = await datbaseHelper.insert(row);
         print('inserted row id: $id');
       }
-
       setState(() {
         txtNameCtrl.text = '';
         txtAgeCtrl.text = '';
@@ -203,7 +203,12 @@ class _HomeState extends State<Home> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ShowSqfiteData()));
+                },
               ),
               RaisedButton(
                 child: Padding(
